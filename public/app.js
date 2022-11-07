@@ -1,35 +1,37 @@
-(function(d, axios){
-    "use strict";
-    var inputFile = d.querySelector('#inputFile');
-    var divNotification = d.querySelector('#alert');
+(function (d) {
+  const inputFile = d.querySelector('#inputFile');
+  const divNotification = d.querySelector('#alert');
 
-    inputFile.addEventListener('change', addFile);
+  inputFile.addEventListener('change', addFile);
 
-    function addFile(e) {
-        var file = e.target.files[0];
-        if (!file) {
-            return;
-        }
-        upload(file);
+  function addFile(e) {
+    const [file] = e.target.files;
+    if (!file) {
+      return;
     }
+    upload(file);
+  }
 
-    function upload(file) {
-        var formData = new FormData();
-        formData.append('file', file);
+  async function upload(file) {
+    const formData = new FormData();
+    formData.append('file', file);
 
-        post('/upload', formData)
-            .then(onResponse)
-            .catch(onResponse);
-    }
+    const result = await fetch('/upload', {
+      method: 'POST',
+      body: formData,
+    });
 
-    function onResponse(response) {
-        var className = (response.status !== 400) ? 'success' : 'error';
+    const message = await result.text();
+    onResponse(result.status, message);
+  }
 
-        divNotification.innerHTML = response.data;
-        divNotification.classList.add(className);
-        setTimeout(function () {
-            divNotification.classList.remove(className);
-        }, 3000);
-    }
+  function onResponse(status, message) {
+    const className = status !== 400 ? 'success' : 'error';
 
-})(document, axios);
+    divNotification.innerHTML = message;
+    divNotification.classList.add(className);
+    setTimeout(function () {
+      divNotification.classList.remove(className);
+    }, 3000);
+  }
+})(document);

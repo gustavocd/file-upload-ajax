@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -13,7 +12,7 @@ func main() {
 
 	http.HandleFunc("/upload", controllers.UploadFile)
 
-	fmt.Println("Server running")
+	log.Println("🚀 server running at port 8080")
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
